@@ -85,35 +85,34 @@ fn join_sorted<FI, FO>(f1: Vec<GenericArray<usize, FI>>, f2: Vec<GenericArray<us
 where FI: ArrayLength, FO: ArrayLength 
 {
     let mut res = Vec::new();
-    let mut last = usize::max_value();  // Last processed element
-    let mut start = 0;  // Start of that element in f2
-    let mut end = 0;    // End of that element in f2
+    let mut range_map = BTreeMap::new();
+    let mut last = usize::max_value();
+    let mut start = 0;
 
-    for r1 in f1.iter() {
-        let join_ele = r1[pos_1];
-        if last == join_ele {
-            // Same as last value, only need to iter range
-            update_current(&mut res, start..end, r1, &f2, pos_1);
+    for i in 0..f2.len()+1 {
+        if i == f2.len() {
+            // End of loop, add end for last element
+            range_map.insert(last, start..i);
+            break;
+        }
+        // Same element as last
+        if f2[i][0] == last {
             continue;
         }
 
-        // First encounter with element: Need to find the correct range
-        // TODO: Future optimization: create map in the beginning at once for all elements in f2, so no need to iterate for elements that don't occur
-        start = end;
-        last = join_ele;
-        while start < f2.len() && f2[start][0] != join_ele {
-            start += 1;
-        }
-        if start == f2.len() {
-            
+        // New element, add old one
+        range_map.insert(last, start..i);
+        last = f2[i][0];
+        start = i;
+    }
+
+    for r1 in f1.iter() {
+        let range = range_map.get(&r1[pos_1]);
+        if range == None { 
             continue; 
         }
-        end = start;
-        while end < f2.len() && f2[end][0] == join_ele {
-            end += 1;
-        }
 
-        update_current(&mut res, start..end, r1, &f2, pos_1);
+        update_current(&mut res, range.unwrap().clone(), r1, &f2, pos_1);
     }
 
     res
