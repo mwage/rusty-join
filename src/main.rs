@@ -67,15 +67,15 @@ where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength
                 let mut new = GenericArray::default();
                 new[0] = r1[pos_1];
                 let mut curr = 1;
-                for (i, s) in r1.iter().enumerate() {
+                for i in 0..F1::to_usize() {
                     if i != pos_1 {
-                        new[curr] = *s;
+                        new[curr] = r1[i];
                         curr += 1;
                     }
                 }
-                for (i, s) in r2.iter().enumerate() {
+                for i in 0..F2::to_usize() {
                     if i != pos_2 {
-                        new[curr] = *s;
+                        new[curr] = r2[i];
                         curr += 1;
                     }
                 }
