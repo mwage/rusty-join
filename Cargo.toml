@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 generic-array = "1.1.0"
 typenum = "1.17.0"
+rustc-hash = "2.0.0"
