@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::fs::read_to_string;
 use generic_array::{ArrayLength, GenericArray};
@@ -43,9 +43,9 @@ fn main() {
         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
 
-    let f1_f2 = join::<U2, U2, U3>(f1, f2, 0, 0);
-    let f1_f2_f3 = join::<U3, U2, U4>(f1_f2, f3, 0, 0);
-    let f1_f2_f3_f4 = join::<U4, U2, U5>(f1_f2_f3, f4, 3, 0);
+    let f1_f2 = join::<U2, U3>(f1, f2, 0);
+    let f1_f2_f3 = join::<U3, U4>(f1_f2, f3, 0);
+    let f1_f2_f3_f4 = join::<U4, U5>(f1_f2_f3, f4, 3);
     for row in f1_f2_f3_f4.iter() {
         println!("{}", row.iter().map(|i| encoder.decode(*i).to_string()).collect::<Vec<String>>().join(","));
     }
@@ -57,31 +57,50 @@ fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2
     ).collect()
 }
 
-fn join<F1, F2, F3>(f1: Vec<GenericArray<usize, F1>>, f2: Vec<GenericArray<usize, F2>>, pos_1: usize, pos_2: usize) -> Vec<GenericArray<usize, F3>> 
-where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength 
+// Only matches with first position of second line
+fn join<FI, FO>(f1: Vec<GenericArray<usize, FI>>, f2: Vec<GenericArray<usize, U2>>, pos_1: usize) -> Vec<GenericArray<usize, FO>> 
+where FI: ArrayLength, FO: ArrayLength 
 {
     let mut res = Vec::new();
-    for r1 in f1.iter() {
-        for r2 in f2.iter() {
-            if r1[pos_1] == r2[pos_2] {
-                let mut new = GenericArray::default();
-                new[0] = r1[pos_1];
-                let mut curr = 1;
-                for i in 0..F1::to_usize() {
-                    if i != pos_1 {
-                        new[curr] = r1[i];
-                        curr += 1;
+    let mut seen: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
+    for (i1, r1) in f1.iter().enumerate() {
+        match seen.get(&i1) {
+            Some(list) => {
+                for other in list.iter() {
+                    let mut new = GenericArray::default();
+                    new[0] = r1[pos_1];
+                    let mut curr = 1;
+                    for i in 0..FI::to_usize() {
+                        if i != pos_1 {
+                            new[curr] = r1[i];
+                            curr += 1;
+                        }
+                    }
+                    new[curr] = *other;
+                    res.push(new);
+                }
+            },
+            None => {
+                let mut list = Vec::new();
+                for r2 in f2.iter() {
+                    if r1[pos_1] == r2[0] {
+                        let mut new = GenericArray::default();
+                        new[0] = r1[pos_1];
+                        let mut curr = 1;
+                        for i in 0..FI::to_usize() {
+                            if i != pos_1 {
+                                new[curr] = r1[i];
+                                curr += 1;
+                            }
+                        }
+                        new[curr] = r2[1];
+                        res.push(new);
+                        list.push(r2[1]);
                     }
                 }
-                for i in 0..F2::to_usize() {
-                    if i != pos_2 {
-                        new[curr] = r2[i];
-                        curr += 1;
-                    }
-                }
-                res.push(new);
+                seen.insert(i1, list);
             }
-        }
+        };
     }
 
     res
