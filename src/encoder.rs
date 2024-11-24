@@ -1,5 +1,6 @@
 use rustc_hash::FxHashMap;
 
+// Encodes the strings into integers to speed up the join procedures (copy, comparisons, etc.)
 pub struct Encoder {
     dict: FxHashMap<String, usize>,
     vec: Vec<String>
@@ -13,6 +14,7 @@ impl Encoder {
         }
     }
 
+    // Encode to int
     pub fn encode(&mut self, value: &str) -> usize {
         match self.dict.get(value) {
             Some(x) => *x,
@@ -26,6 +28,7 @@ impl Encoder {
         }
     }
 
+    // Decode int to string
     pub fn decode(&self, idx: usize) -> &String {
         &self.vec[idx]
     }

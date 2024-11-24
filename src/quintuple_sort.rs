@@ -3,8 +3,8 @@ use crate::encoder::Encoder;
 use generic_array::{ArrayLength, GenericArray};
 use typenum::{U2, U3, U4, U5};
 use rustc_hash::FxHashMap;
-use std::ops::Range;
 
+// Joins the columns together by sorting them and then operating on the sorted lists
 pub fn quintuple_sort(args: Vec<String>) {
     let mut encoder = Encoder::new();
     let (mut f1, mut f2, mut f3, mut f4) = (
@@ -35,6 +35,7 @@ where FI: ArrayLength, FO: ArrayLength
     let mut last = usize::max_value();
     let mut start = 0;
 
+    // Create range map (in which range do the individual elements of the second join column start and end)
     for i in 0..f2.len()+1 {
         if i == f2.len() {
             // End of loop, add end for last element
@@ -52,12 +53,14 @@ where FI: ArrayLength, FO: ArrayLength
         start = i;
     }
 
+    // Go through all elements of first join column and match with all entries in the range of the matching second join column
     for r1 in f1.iter() {
         let range = range_map.get(&r1[pos_1]);
         if range == None { 
             continue; 
         }
 
+        // Found matching entry, for each row in the range, merge together
         for i2 in range.unwrap().clone() {
             let mut new = GenericArray::default();
             new[0] = r1[pos_1];
