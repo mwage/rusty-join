@@ -40,3 +40,5 @@ Installs rustc and cargo and rust-analyzer
   - `cargo bench > control`
   - `cargo bench > variable`
   - `cargo benchcmp`
+  - `scp -r ep12124528@g0.complang.tuwien.ac.at:/home/ep24/ep12124528/rusty-join/target/criterion/ ./ && cd criterion && http-server`
+  - `cargo bench | awk '!/^[a-z],[a-z],[a-z],[a-z],[a-z]$/' > output.txt` run cargo bench and output to output.txt because stdout is unreadable
