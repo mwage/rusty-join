@@ -22,3 +22,19 @@ Installs rustc and cargo and rust-analyzer
 - `cargo test` ... sanity test for the current impl
 - `cargo build --release` ... build release
 - `LC_NUMERIC=en_US perf stat -e cycles /usr/ftp/pub/anton/lvas/effizienz-aufgabe24/myjoin /localtmp/efficient24/f1.csv /localtmp/efficient24/f2.csv /localtmp/efficient24/f3.csv /localtmp/efficient24/f4.csv > /dev/null`
+- `cargo bench` ... run benchmarks
+  -  to add more benchmark files go to benches/mybench.rs
+  - add
+
+  ```toml
+  [[bench]]
+  name = "simple"
+  harness = false
+  ```
+
+  to `Cargo.toml`
+- `cargo bench -- --verbose` ... run benchmarks with more output
+- `cargo install cargo-benchcmp` .. install benchcmp
+  - `cargo bench > control`
+  - `cargo bench > variable`
+  - `cargo benchcmp`
