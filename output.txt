@@ -1,0 +1,41 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test sanity_test ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Joining/SplitNoEncode/Small
+                        time:   [82989.2372 cycles 83033.3997 cycles 83080.9380 cycles]
+                        change: [-35.473% -34.271% -33.151%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 6 outliers among 100 measurements (6.00%)
+  5 (5.00%) high mild
+  1 (1.00%) high severe
+Joining/AllHash/Small   time:   [90557.1057 cycles 90634.0540 cycles 90715.3393 cycles]
+                        change: [-39.242% -33.875% -30.168%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+Joining/QuintupleSort/Small
+                        time:   [92385.1268 cycles 92466.4890 cycles 92551.6399 cycles]
+                        change: [-33.956% -32.035% -30.298%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+Joining/SplitDuringRead/Small
+                        time:   [91234.9361 cycles 91296.9762 cycles 91357.5489 cycles]
+                        change: [-29.326% -28.782% -28.282%] (p = 0.00 < 0.05)
+                        Performance has improved.
+Found 10 outliers among 100 measurements (10.00%)
+  1 (1.00%) low severe
+  1 (1.00%) low mild
+  3 (3.00%) high mild
+  5 (5.00%) high severe
+
