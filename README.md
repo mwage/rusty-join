@@ -17,15 +17,17 @@ Additionally for apple users `ssh-add --apple-use-keychain ~/.ssh/{yourkey}` on 
 Also it may be required to install rustup for lsp support in your editor on the remote:
 `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 Installs rustc and cargo and rust-analyzer
-
-## Commands
+## Functionality tests
 - `cargo test` ... sanity test for the current impl
-- `cargo build --release` ... build release
+
+## LVA Benchmarking
 - `LC_NUMERIC=en_US perf stat -e cycles /usr/ftp/pub/anton/lvas/effizienz-aufgabe24/myjoin /localtmp/efficient24/f1.csv /localtmp/efficient24/f2.csv /localtmp/efficient24/f3.csv /localtmp/efficient24/f4.csv > /dev/null`
+
+## Caro Benchmarking (may be overkill)
+- `cargo build --release` ... build release
 - `cargo bench` ... run benchmarks
   -  to add more benchmark files go to benches/mybench.rs
   - add
-
   ```toml
   [[bench]]
   name = "simple"
