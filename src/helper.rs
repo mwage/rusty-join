@@ -31,3 +31,14 @@ pub fn read_file_split(file: &String, encoder: &mut Encoder) -> FxHashMap<usize,
 
     map
 }
+
+pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<String>> {
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+
+    for line in read_to_string(file).unwrap().lines() {
+        let mut split = line.split(",").map(|x| x.to_string());
+        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
+    }
+
+    map
+}

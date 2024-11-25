@@ -10,7 +10,7 @@ pub fn quintuple_sort(args: Vec<String>) {
     let (mut f1, mut f2, mut f3, mut f4) = (
         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
-
+    
     sort(&mut f1, 0);
     sort(&mut f2, 0);
     let f1_f2 = join_sorted::<U2, U3>(f1, f2, 0);
@@ -19,7 +19,7 @@ pub fn quintuple_sort(args: Vec<String>) {
     sort(&mut f1_f2_f3, 3);
     sort(&mut f4, 0);
     let f1_f2_f3_f4 = join_sorted::<U4, U5>(f1_f2_f3, f4, 3);
-
+    
     for row in f1_f2_f3_f4.iter() {
         println!("{}", row.iter().map(|i| encoder.decode(*i).to_string()).collect::<Vec<String>>().join(","));
     }
