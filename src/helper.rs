@@ -1,5 +1,5 @@
 use generic_array::{ArrayLength, GenericArray};
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxBuildHasher};
 use typenum::U2;
 use std::fs::read_to_string;
 use crate::encoder::Encoder;
@@ -33,7 +33,8 @@ pub fn read_file_split(file: &String, encoder: &mut Encoder) -> FxHashMap<usize,
 }
 
 pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+    let mut map: FxHashMap<String, Vec<String>> =
+        FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
