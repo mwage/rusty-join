@@ -13,6 +13,8 @@ pub fn split_no_encode(args: Vec<String>) {
 
 // Iterates the hashmaps and outputs all correct matches
 fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
+    let mut buffer = String::new();
+    
     for key in f1.keys() {
         if !f2.contains_key(key) || !f3.contains_key(key) {
             continue;   // Not in all 3
@@ -26,10 +28,12 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
                     }
                     
                     for x4 in f4.get(x3).unwrap() {
-                        println!("{},{},{},{},{}", x3, key, x1, x2, x4);
+                        buffer.push_str(&format!("{},{},{},{},{}\n", x3, key, x1, x2, x4));
                     }
                 }
             }
         }
     }
+
+    print!("{}", buffer);
 }
