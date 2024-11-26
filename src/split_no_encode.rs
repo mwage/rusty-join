@@ -28,7 +28,16 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
                     }
                     
                     for x4 in f4.get(x3).unwrap() {
-                        buffer.push_str(&format!("{},{},{},{},{}\n", x3, key, x1, x2, x4));
+                        buffer.push_str(x3);
+                        buffer.push(',');
+                        buffer.push_str(key);
+                        buffer.push(',');
+                        buffer.push_str(x1);
+                        buffer.push(',');
+                        buffer.push_str(x2);
+                        buffer.push(',');
+                        buffer.push_str(x4);
+                        buffer.push('\n');
                     }
                 }
             }
