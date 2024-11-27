@@ -5,9 +5,10 @@ use rustc_hash::FxHashMap;
 // Values are not encoded, just stored as a string.
 pub fn split_no_encode_pattern_matching(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
-        read_file_split_no_encoding(&args[1]), read_file_split_no_encoding(&args[2]),
-        read_file_split_no_encoding(&args[3]), read_file_split_no_encoding(&args[4])
+        read_file_no_entry_api(&args[1]), read_file_no_entry_api(&args[2]),
+        read_file_no_entry_api(&args[3]), read_file_no_entry_api(&args[4])
     );
+    
     join_first_three_and_output_with_forth(f1, f2, f3, f4);
 }
 
