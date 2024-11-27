@@ -38,7 +38,9 @@ pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<Strin
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
-        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
+        map.entry(split.next().unwrap())
+            .or_insert_with(|| Vec::with_capacity(2))
+            .push(split.next().unwrap());
     }
 
     map
