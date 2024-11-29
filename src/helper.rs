@@ -3,6 +3,7 @@ use rustc_hash::FxHashMap;
 use typenum::U2;
 use std::fs::read_to_string;
 use crate::encoder::Encoder;
+use compact_str::CompactString;
 
 // Sorts file by key position
 pub fn sort<F: ArrayLength>(file: &mut Vec<GenericArray<usize, F>>, pos: usize) {
@@ -27,6 +28,13 @@ pub fn read_file_no_encoding(file: &String) -> Vec<(String, String)> {
     ).collect()
 }
 
+pub fn read_file_no_encoding_compact(file: &String) -> Vec<(CompactString, CompactString)> {
+    read_to_string(file).unwrap().lines().map(
+        |line| { let mut split=line.split(","); (CompactString::from(split.next().unwrap()), CompactString::from(split.next().unwrap())) }
+    ).collect()
+}
+
+
 // Reads file into a hashmap (key = the different entries, value = list of all elements it appears with)
 // TODO: This could probably be done with vectors instead of hash maps.
 // TODO: Try: Split into separate hashmap for each column type 
@@ -46,6 +54,18 @@ pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<Strin
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
+        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
+    }
+
+    map
+}
+
+
+pub fn read_file_split_no_encoding_compact(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
+    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::default();
+
+    for line in read_to_string(file).unwrap().lines() {
+        let mut split = line.split(",").map(|x| CompactString::from(x));
         map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
     }
 

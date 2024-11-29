@@ -4,10 +4,10 @@ use rusty_join::{all_hash, split_no_encode};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    // all_hash(args);          // ~136m
+    all_hash(args);          // ~136m
     // quintuple_sort(args);    // ~129m
     // split_during_read(args);    // ~133/138m
-    split_no_encode(args); // ~100m
+    // split_no_encode(args); // ~100m
 }
 /// #DON"T forget to use your implementation above!!!"
 /// Tests the functionality of the current solution defined above (comment out the ones youdont want)
