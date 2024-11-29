@@ -1,6 +1,6 @@
 use std::env;
 
-use rusty_join::split_no_encode;
+use rusty_join::{all_hash, split_no_encode};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
