@@ -1,13 +1,35 @@
 use crate::helper::*;
 use rustc_hash::FxHashMap;
+use std::thread;
 
 // Reads all files into hash maps with the first column as key, then merges together accordingly.
 // Values are not encoded, just stored as a string.
 pub fn split_no_encode(args: Vec<String>) {
-    let (f1, f2, f3, f4) = (
-        read_file_split_no_encoding(&args[1]), read_file_split_no_encoding(&args[2]),
-        read_file_split_no_encoding(&args[3]), read_file_split_no_encoding(&args[4])
-    );
+    let t1 = thread::spawn({
+        let file_path = args[1].clone();
+        move || read_file_split_no_encoding(&file_path)
+    });
+
+    let t2 = thread::spawn({
+        let file_path = args[2].clone();
+        move || read_file_split_no_encoding(&file_path)
+    });
+
+    let t3 = thread::spawn({
+        let file_path = args[3].clone();
+        move || read_file_split_no_encoding(&file_path)
+    });
+
+    let t4 = thread::spawn({
+        let file_path = args[4].clone();
+        move || read_file_split_no_encoding(&file_path)
+    });
+
+    let f1 = t1.join().expect("Thread 1 panicked");
+    let f2 = t2.join().expect("Thread 2 panicked");
+    let f3 = t3.join().expect("Thread 3 panicked");
+    let f4 = t4.join().expect("Thread 4 panicked");
+
     join_first_three_and_output_with_forth(f1, f2, f3, f4);
 }
 
