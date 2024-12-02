@@ -19,6 +19,22 @@ pub fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize
     ).collect()
 }
 
+// Reads file into a vector of rows (as fixed size arrays)
+// TODO: BufReader
+// TODO: Try: Split into separate hashmap for each column type 
+pub fn read_file_no_encoding(file: &String) -> Vec<(String, String)> {
+    read_to_string(file).unwrap().lines().map(
+        |line| { let mut split=line.split(","); (split.next().unwrap().to_string(), split.next().unwrap().to_string()) }
+    ).collect()
+}
+
+pub fn read_file_no_encoding_compact(file: &String) -> Vec<(CompactString, CompactString)> {
+    read_to_string(file).unwrap().lines().map(
+        |line| { let mut split=line.split(","); (CompactString::from(split.next().unwrap()), CompactString::from(split.next().unwrap())) }
+    ).collect()
+}
+
+
 // Reads file into a hashmap (key = the different entries, value = list of all elements it appears with)
 // TODO: This could probably be done with vectors instead of hash maps.
 // TODO: Try: Split into separate hashmap for each column type 
