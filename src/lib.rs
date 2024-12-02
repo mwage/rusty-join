@@ -11,3 +11,4 @@ pub use quintuple_sort::quintuple_sort;
 pub use split_during_read::split_during_read;
 pub use split_no_encode::split_no_encode;
 pub use split_no_encode_pattern_matching::split_no_encode_pattern_matching;
+pub use split_no_encode::split_with_str_read;

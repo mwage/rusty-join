@@ -14,6 +14,7 @@ fn main() {
     //split_no_encode(args); // ~100m/~84m
     split_no_encode_pattern_matching(args); //~76m
 }
+
 /// #DON"T forget to use your implementation above!!!"
 /// Tests the functionality of the current solution defined above (comment out the ones youdont want)
 ///
