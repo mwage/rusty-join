@@ -76,7 +76,7 @@ pub fn read_file_split_no_encoding_compact(file: &String) -> FxHashMap<CompactSt
  */
 // Third version hashmap parse (with capacity and no entry API)
 pub fn read_file_no_entry_api(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
-    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::default();
     let contents = std::fs::read_to_string(file).unwrap();
 
     for line in contents.lines() {
