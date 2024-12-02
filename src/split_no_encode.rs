@@ -5,6 +5,7 @@ use compact_str::CompactString;
 
 // Reads all files into hash maps with the first column as key, then merges together accordingly.
 // Values are not encoded, just stored as a string.
+// Succeeded by split_no_encode_pattern_matching
 pub fn split_no_encode(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
         read_file_split_no_encoding_compact(&args[1]), read_file_split_no_encoding_compact(&args[2]),

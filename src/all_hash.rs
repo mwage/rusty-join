@@ -1,4 +1,6 @@
 
+use std::io::{stdout, BufWriter, Write};
+
 use crate::helper::*;
 
 use rustc_hash::FxHashMap;
@@ -42,7 +44,9 @@ pub fn all_hash(args: Vec<String>){
     /* dict_a contains for every key (e.g. first column of first file) several lists that have to be combined
     via a cartesian product, i.e. all combinations have to be generated
     */
-    let mut buffer = String::new();
+    let stdout = stdout();
+    let lock = stdout.lock();
+    let mut buffer = BufWriter::new(lock);
     for (a_val, (f1_2, f2_2, f3_2)) in dict_a.iter() {
         /* the last vector is only filled if a join is possible (the value occurs in all files), iterating over
         the last vector in the outer loop ensures combinations are only generated for keys where join is possible
@@ -53,16 +57,16 @@ pub fn all_hash(args: Vec<String>){
                 for f4_2_val in f4_2_list.iter() {
                     for f2_2_val in f2_2.iter() {
                         for f1_2_val in f1_2.iter() {
-                            buffer.push_str(f3_2_val);
-                            buffer.push(',');
-                            buffer.push_str(a_val);
-                            buffer.push(',');
-                            buffer.push_str(f1_2_val);
-                            buffer.push(',');
-                            buffer.push_str(f2_2_val);
-                            buffer.push(',');
-                            buffer.push_str(f4_2_val);
-                            buffer.push('\n');
+                            buffer.write(f3_2_val.as_bytes());
+                            buffer.write(b",");
+                            buffer.write(a_val.as_bytes());
+                            buffer.write(b",");
+                            buffer.write(f1_2_val.as_bytes());
+                            buffer.write(b",");
+                            buffer.write(f2_2_val.as_bytes());
+                            buffer.write(b",");
+                            buffer.write(f4_2_val.as_bytes());
+                            buffer.write(b"\n");
                         }
                     }
                 }
@@ -70,5 +74,5 @@ pub fn all_hash(args: Vec<String>){
         }
     }
 
-    print!("{}", buffer);
+    buffer.flush().unwrap()
 }
