@@ -15,7 +15,7 @@ pub fn split_no_encode(args: Vec<String>) {
 
 // Iterates the hashmaps and outputs all correct matches
 fn join_first_three_and_output_with_forth(f1: FxHashMap<CompactString, Vec<CompactString>>, f2: FxHashMap<CompactString, Vec<CompactString>>, f3: FxHashMap<CompactString, Vec<CompactString>>, f4: FxHashMap<CompactString, Vec<CompactString>>) {
-  let mut buffer = String::new();
+    let mut buffer = String::new();
     for key in f1.keys() {
         if !f2.contains_key(key) || !f3.contains_key(key) {
             continue;   // Not in all 3

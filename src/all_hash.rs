@@ -6,7 +6,7 @@ use compact_str::CompactString;
 
 pub fn all_hash(args: Vec<String>){
     let (f1, f2, f3, dict_d) = (
-        read_file_no_encoding_compact(&args[1]), read_file_no_encoding_compact(&args[2]), read_file_no_encoding_compact(&args[3]), read_file_split_no_encoding_compact(&args[4])
+        read_file_no_encoding_compact(&args[1]), read_file_no_encoding_compact(&args[2]), read_file_no_encoding_compact(&args[3]), read_file_no_entry_api(&args[4])
     );
 
     /* Hash map for storing merge options of every file. The first Vec<(usize,Vec<usize>)> consists of pairs of a value 
@@ -42,6 +42,7 @@ pub fn all_hash(args: Vec<String>){
     /* dict_a contains for every key (e.g. first column of first file) several lists that have to be combined
     via a cartesian product, i.e. all combinations have to be generated
     */
+    let mut buffer = String::new();
     for (a_val, (f1_2, f2_2, f3_2)) in dict_a.iter() {
         /* the last vector is only filled if a join is possible (the value occurs in all files), iterating over
         the last vector in the outer loop ensures combinations are only generated for keys where join is possible
@@ -52,11 +53,22 @@ pub fn all_hash(args: Vec<String>){
                 for f4_2_val in f4_2_list.iter() {
                     for f2_2_val in f2_2.iter() {
                         for f1_2_val in f1_2.iter() {
-                            println!("{},{},{},{},{}", *f3_2_val, *a_val, *f1_2_val, *f2_2_val, *f4_2_val);
+                            buffer.push_str(f3_2_val);
+                            buffer.push(',');
+                            buffer.push_str(a_val);
+                            buffer.push(',');
+                            buffer.push_str(f1_2_val);
+                            buffer.push(',');
+                            buffer.push_str(f2_2_val);
+                            buffer.push(',');
+                            buffer.push_str(f4_2_val);
+                            buffer.push('\n');
                         }
                     }
                 }
             }
         }
     }
+
+    print!("{}", buffer);
 }

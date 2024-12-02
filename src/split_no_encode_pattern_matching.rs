@@ -1,5 +1,6 @@
 use crate::helper::*;
 use rustc_hash::FxHashMap;
+use compact_str::CompactString;
 
 // Reads all files into hash maps with the first column as key, then merges together accordingly.
 // Values are not encoded, just stored as a string.
@@ -13,7 +14,8 @@ pub fn split_no_encode_pattern_matching(args: Vec<String>) {
 }
 
 // Iterates the hashmaps and outputs all correct matches
-fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
+fn join_first_three_and_output_with_forth(f1: FxHashMap<CompactString, Vec<CompactString>>, f2: FxHashMap<CompactString, Vec<CompactString>>, f3: FxHashMap<CompactString, Vec<CompactString>>, f4: FxHashMap<CompactString, Vec<CompactString>>) {
+    let mut buffer = String::new();
     for (key, vec1) in f1.iter() {
         if let (Some(vec2), Some(vec3)) = (f2.get(key), f3.get(key)) {
             for x1 in vec1 {
@@ -21,7 +23,16 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
                     for x3 in vec3 {
                         if let Some(vec4) = f4.get(x3) {
                             for x4 in vec4 {
-                                println!("{},{},{},{},{}", x3, key, x1, x2, x4);
+                                buffer.push_str(x3);
+                                buffer.push(',');
+                                buffer.push_str(key);
+                                buffer.push(',');
+                                buffer.push_str(x1);
+                                buffer.push(',');
+                                buffer.push_str(x2);
+                                buffer.push(',');
+                                buffer.push_str(x4);
+                                buffer.push('\n');
                             }
                         }
                     }
@@ -29,4 +40,6 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
             }
         }
     }
+    
+    print!("{}", buffer);
 }
