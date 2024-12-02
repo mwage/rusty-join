@@ -1,15 +1,20 @@
 use std::env;
 
-use rusty_join::{all_hash, split_no_encode};
+//use rusty_join::split_no_encode;
+//use rusty_join::all_hash;
+//use rusty_join::quintuple_sort;
+//use rusty_join::split_during_read;
+use rusty_join::split_no_encode_pattern_matching;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    all_hash(args);          // ~136m
+    //all_hash(args);          // ~136m
     // quintuple_sort(args);    // ~129m
     // split_during_read(args);    // ~133/138m
-    split_no_encode(args); // ~100m
-    // split_with_str_read(args); // ~100m
+    //split_no_encode(args); // ~100m/~84m
+    split_no_encode_pattern_matching(args); //~76m
 }
+
 /// #DON"T forget to use your implementation above!!!"
 /// Tests the functionality of the current solution defined above (comment out the ones youdont want)
 ///

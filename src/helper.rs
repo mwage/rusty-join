@@ -74,3 +74,22 @@ pub fn read_file_split_no_encoding_compact(file: &String) -> FxHashMap<CompactSt
 
     map
 }
+
+/**
+ * Reads the file, while avoiding the entry api as it seems to be a bit slower
+ */
+pub fn read_file_no_entry_api(file: &String) -> FxHashMap<String, Vec<String>> {
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+    let contents = std::fs::read_to_string(file).unwrap();
+
+    for line in contents.lines() {
+        if let Some((key, value)) = line.split_once(',') {
+            if let Some(entry) = map.get_mut(key) {
+                entry.push(value.to_string());
+            } else {
+                map.insert(key.to_string(), vec![value.to_string()]);
+            }
+        }
+    }
+    map
+}
