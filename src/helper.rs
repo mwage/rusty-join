@@ -3,6 +3,7 @@ use rustc_hash::{FxHashMap, FxBuildHasher};
 use typenum::U2;
 use std::fs::read_to_string;
 use crate::encoder::Encoder;
+use compact_str::CompactString;
 
 // Sorts file by key position
 pub fn sort<F: ArrayLength>(file: &mut Vec<GenericArray<usize, F>>, pos: usize) {
@@ -10,18 +11,30 @@ pub fn sort<F: ArrayLength>(file: &mut Vec<GenericArray<usize, F>>, pos: usize) 
 }
 
 // Reads file into a vector of rows (as fixed size arrays)
-// TODO: BufReader
-// TODO: Try: Split into separate hashmap for each column type 
+// Encoder version w/o hash map
 pub fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
     read_to_string(file).unwrap().lines().map(
         |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
     ).collect()
 }
 
+// Reads file into a vector of rows (as fixed size arrays)
+// First version unencoded no hashmap
+pub fn read_file_no_encoding(file: &String) -> Vec<(String, String)> {
+    read_to_string(file).unwrap().lines().map(
+        |line| { let mut split=line.split(","); (split.next().unwrap().to_string(), split.next().unwrap().to_string()) }
+    ).collect()
+}
+
+// Second version unencoded (with compact strings) no hashmap
+pub fn read_file_no_encoding_compact(file: &String) -> Vec<(CompactString, CompactString)> {
+    read_to_string(file).unwrap().lines().map(
+        |line| { let mut split=line.split(","); (CompactString::from(split.next().unwrap()), CompactString::from(split.next().unwrap())) }
+    ).collect()
+}
+
 // Reads file into a hashmap (key = the different entries, value = list of all elements it appears with)
-// TODO: This could probably be done with vectors instead of hash maps.
-// TODO: Try: Split into separate hashmap for each column type 
-// TODO: BufReader
+// Encoder version with hash map
 pub fn read_file_split(file: &String, encoder: &mut Encoder) -> FxHashMap<usize, Vec<usize>> {
     let mut map: FxHashMap<usize, Vec<usize>> = FxHashMap::default();
     for line in read_to_string(file).unwrap().lines() {
@@ -32,9 +45,9 @@ pub fn read_file_split(file: &String, encoder: &mut Encoder) -> FxHashMap<usize,
     map
 }
 
+// First version hashmap parse 
 pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> =
-        FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
@@ -43,5 +56,36 @@ pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<Strin
             .push(split.next().unwrap());
     }
 
+    map
+}
+
+// Second version hashmap parse (with compact strings)
+pub fn read_file_split_no_encoding_compact(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
+    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::default();
+
+    for line in read_to_string(file).unwrap().lines() {
+        let mut split = line.split(",").map(|x| CompactString::from(x));
+        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
+    }
+
+    map
+}
+
+/**
+ * Reads the file, while avoiding the entry api as it seems to be a bit slower
+ */
+// Third version hashmap parse (with capacity and no entry API)
+pub fn read_file_no_entry_api(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
+    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let contents = std::fs::read_to_string(file).unwrap();
+
+    for line in contents.lines() {
+        let (key, value) = line.split_once(',').unwrap();
+        if let Some(entry) = map.get_mut(key) {
+            entry.push(CompactString::from(value));
+        } else {
+            map.insert(CompactString::from(key), vec![CompactString::from(value)]);
+        }
+    }
     map
 }
