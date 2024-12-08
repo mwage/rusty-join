@@ -11,10 +11,10 @@ fn bench_impls_smalldataset(c: &mut Criterion<CyclesPerByte>) {
     let mut group = c.benchmark_group("Joining");
     let input_args = vec![
         "dumy".to_string(),
-        "data/a.csv".to_string(),
-        "data/b.csv".to_string(),
-        "data/c.csv".to_string(),
-        "data/d.csv".to_string(),
+        "data/f1.csv".to_string(),
+        "data/f2.csv".to_string(),
+        "data/f3.csv".to_string(),
+        "data/f4.csv".to_string(),
     ];
     group.bench_with_input(
         BenchmarkId::new("SplitNoEncode", "Small"),
