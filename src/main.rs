@@ -8,11 +8,11 @@ use rusty_join::*;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    all_hash(args);
+    //all_hash(args);
     // quintuple_sort(args);
     // split_during_read(args);
     //split_no_encode(args);
-    // split_no_encode_pattern_matching(args);
+    split_no_encode_pattern_matching(args);
 }
 
 /// #DON"T forget to use your implementation above!!!"
