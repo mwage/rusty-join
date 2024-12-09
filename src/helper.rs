@@ -4,6 +4,7 @@ use typenum::U2;
 use std::fs::read_to_string;
 use crate::encoder::Encoder;
 use compact_str::CompactString;
+use smallvec::SmallVec;
 
 // Sorts file by key position
 pub fn sort<F: ArrayLength>(file: &mut Vec<GenericArray<usize, F>>, pos: usize) {
@@ -85,6 +86,44 @@ pub fn read_file_no_entry_api(file: &String) -> FxHashMap<CompactString, Vec<Com
             entry.push(CompactString::from(value));
         } else {
             map.insert(CompactString::from(key), vec![CompactString::from(value)]);
+        }
+    }
+    map
+}
+
+// Fourth version hashmap parse (with capacity on hashMap and Vec and no entry API)
+pub fn read_file_no_entry_api_prealloc_vec(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
+    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let contents = std::fs::read_to_string(file).unwrap();
+
+    for line in contents.lines() {
+        let (key, value) = line.split_once(',').unwrap();
+        if let Some(entry) = map.get_mut(key) {
+            entry.push(CompactString::from(value));
+        } else {
+            // ~2m better than without ::with_capacity(5)
+            let mut vec = Vec::with_capacity(5);
+            vec.push(CompactString::from(value));
+            map.insert(CompactString::from(key), vec);
+        }
+    }
+    map
+}
+
+// Fifth version hashmap parse (with capacity, SmallVec and no entry API)
+pub fn read_file_no_entry_api_small_vec(file: &String) -> FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+    let mut map: FxHashMap<CompactString, SmallVec<[CompactString; 5]>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let contents = std::fs::read_to_string(file).unwrap();
+
+    for line in contents.lines() {
+        let (key, value) = line.split_once(',').unwrap();
+        if let Some(entry) = map.get_mut(key) {
+            entry.push(CompactString::from(value));
+        } else {
+            // ~2m better than without ::with_capacity(5)
+            let mut vec = SmallVec::new();
+            vec.push(CompactString::from(value));
+            map.insert(CompactString::from(key), vec);
         }
     }
     map
