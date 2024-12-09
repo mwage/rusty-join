@@ -2,6 +2,7 @@ pub mod all_hash;
 pub mod encoder;
 pub mod helper;
 pub mod quintuple_sort;
+pub mod quintuple_sort_new;
 pub mod split_during_read;
 pub mod split_no_encode;
 pub mod split_no_encode_pattern_matching;

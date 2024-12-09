@@ -10,6 +10,11 @@ pub fn sort<F: ArrayLength>(file: &mut Vec<GenericArray<usize, F>>, pos: usize) 
     file.sort_by_key(|f| f[pos]);
 }
 
+// Sorts file by key position
+pub fn sort_tuple(file: &mut Vec<(CompactString, CompactString)>, pos: usize) {
+    file.sort_by_key(|f| if pos == 0 {f.0.clone() } else {f.1.clone()} );
+}
+
 // Reads file into a vector of rows (as fixed size arrays)
 // Encoder version w/o hash map
 pub fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
