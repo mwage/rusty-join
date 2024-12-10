@@ -1,5 +1,9 @@
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 use std::env;
 
+use polars_join::custom_polars;
 //use rusty_join::split_no_encode;
 //use rusty_join::all_hash;
 //use rusty_join::quintuple_sort;
@@ -8,11 +12,13 @@ use rusty_join::*;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    all_hash(args);
+    //all_hash(args);
+    custom_polars(args);
+    // all_hash(args);
     // quintuple_sort(args);
     // split_during_read(args);
     //split_no_encode(args);
-    // split_no_encode_pattern_matching(args);
+    split_no_encode_pattern_matching(args);
 }
 
 /// #DON"T forget to use your implementation above!!!"
@@ -28,8 +34,6 @@ fn sanity_test() {
     let our_output = Command::new("cargo")
         .args([
             "run",
-            "--release",
-            "--",
             "data/a.csv",
             "data/b.csv",
             "data/c.csv",
