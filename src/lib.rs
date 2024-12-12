@@ -6,6 +6,7 @@ pub mod quintuple_sort;
 pub mod split_during_read;
 pub mod split_no_encode;
 pub mod split_no_encode_pattern_matching;
+pub mod versions;
 pub mod split_no_encode_parallel;
 
 pub use all_hash::all_hash;

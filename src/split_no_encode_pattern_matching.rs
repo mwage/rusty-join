@@ -16,10 +16,10 @@ pub fn split_no_encode_pattern_matching(args: Vec<String>) {
 }
 
 fn join_first_three_and_output_with_forth_small_vec(
-    f1: &FxHashMap<CompactString, SmallVec<[CompactString; 5]>>,
-    f2: &FxHashMap<CompactString, SmallVec<[CompactString; 5]>>,
-    f3: &FxHashMap<CompactString, SmallVec<[CompactString; 5]>>,
-    f4: &FxHashMap<CompactString, SmallVec<[CompactString; 5]>>
+    f1: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
+    f2: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
+    f3: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
+    f4: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>
 ) {
     let stdout = stdout();
     let lock = stdout.lock();
