@@ -3,36 +3,33 @@ use std::io::{stdout, BufWriter, Write};
 
 use crate::helper::*;
 
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxBuildHasher, FxHashMap};
 use compact_str::CompactString;
+use smallvec::SmallVec;
 
 pub fn all_hash(args: Vec<String>){
-    let (f1, f2, f3, dict_d) = (
-        read_file_no_encoding_compact(&args[1]), read_file_no_encoding_compact(&args[2]), read_file_no_encoding_compact(&args[3]), read_file_no_entry_api(&args[4])
-    );
-
-    /* Hash map for storing merge options of every file. The first Vec<(usize,Vec<usize>)> consists of pairs of a value 
-    of the first column of the fourth file, together with all associated values of the second column of the fourth file. 
-    The second vector contains the values of the second column of the second file while the third vector contains values 
-    of the second column of the first file.
+    /* Hash map for storing merge options of the first three files.
     */
-    let mut dict_a: FxHashMap<CompactString, (Vec<CompactString>,Vec<CompactString>,Vec<CompactString>)> = FxHashMap::default();
+    let mut dict_a: FxHashMap<CompactString, (SmallVec<[CompactString; 1]>,SmallVec<[CompactString; 1]>,SmallVec<[CompactString; 1]>)> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
 
-    // store key and values of first file in hash map dict_a, where the key is the first column of the third file
-    for data in f1.iter() {
-        match dict_a.get_mut(&data.0) {
-            Some(entry) => { entry.0.push(data.1.clone()); }
-            None => { dict_a.insert(data.0.clone(), (vec![data.1.clone()], Vec::new(), Vec::new())); }
+    for (key, value) in read_file_no_encoding_compact_split(&args[2]).iter() {
+        if let Some(entry) = dict_a.get_mut(key) {
+            entry.0.push(value.clone());
+        } else {
+            let mut vec = SmallVec::new();
+            vec.push(value.clone());
+            dict_a.insert(key.clone(), (vec, SmallVec::new(), SmallVec::new()));
         }
     }
+
     // add values of the second column of the second file to the appropriate keys (first column of second file) in dict_a
-    for data in f2.iter() {
+    for data in read_file_no_encoding_compact_split(&args[1]).iter() {
         if let Some(entry) = dict_a.get_mut(&data.0) {
             entry.1.push(data.1.clone());
         }
     }
     // add values of the second column of the third file to the appropriate keys (first column of first file) in dict_a
-    for data in f3.iter() {
+    for data in read_file_no_encoding_compact_split(&args[3]).iter() {
         if let Some(entry) = dict_a.get_mut(&data.0) {
             // only add an entry if the join vector of file 2 is not empty
             if !entry.1.is_empty() {
@@ -41,13 +38,14 @@ pub fn all_hash(args: Vec<String>){
         }
     }
 
+    let dict_d = read_file_no_entry_api_small_vec_split(&args[4]);
     /* dict_a contains for every key (e.g. first column of first file) several lists that have to be combined
     via a cartesian product, i.e. all combinations have to be generated
     */
     let stdout = stdout();
     let lock = stdout.lock();
     let mut buffer = BufWriter::new(lock);
-    for (a_val, (f1_2, f2_2, f3_2)) in dict_a.iter() {
+    for (a_val, (f2_2, f1_2, f3_2)) in dict_a.iter() {
         /* the last vector is only filled if a join is possible (the value occurs in all files), iterating over
         the last vector in the outer loop ensures combinations are only generated for keys where join is possible
         */
