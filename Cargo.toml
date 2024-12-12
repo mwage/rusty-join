@@ -13,10 +13,7 @@ compact_str = "0.8.0"
 smallvec = "1.11"
 mimalloc = "0.1"
 polars = { version = "0.45.0", features = ["csv"] }
-# crossbeam = "0.8.4"
 kanal = "=0.1.0-pre3"
-# itertools = "0.13.0"
-# dashmap = "6.1.0"
 
 
 [dev-dependencies]
