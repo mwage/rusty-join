@@ -2,7 +2,7 @@ use generic_array::{ArrayLength, GenericArray};
 use rustc_hash::{FxHashMap, FxBuildHasher};
 use typenum::U2;
 use std::fs::read_to_string;
-use crate::encoder::Encoder;
+use crate::encoder::{Encoder, EncoderFx};
 use compact_str::CompactString;
 use smallvec::SmallVec;
 
@@ -19,6 +19,12 @@ pub fn sort_tuple(file: &mut Vec<(CompactString, CompactString)>, pos: usize) {
 // Reads file into a vector of rows (as fixed size arrays)
 // Encoder version w/o hash map
 pub fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
+    read_to_string(file).unwrap().lines().map(
+        |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
+    ).collect()
+}
+
+pub fn read_file_fx(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
     read_to_string(file).unwrap().lines().map(
         |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
     ).collect()
