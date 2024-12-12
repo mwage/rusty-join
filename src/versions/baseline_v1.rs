@@ -16,6 +16,10 @@ pub fn baseline_v1_read(args: Vec<String>) {
     let (f1, f2, f3, f4) = (read_file(&args[1]), read_file(&args[2]), read_file(&args[3]), read_file(&args[4]));
 }
 
+fn read_file(file: &String) -> Vec<Vec<String>> {
+    read_to_string(file).unwrap().lines().map(|line| line.split(",").map(|x| x.to_string()).collect::<Vec<String>>()).collect()   
+}
+
 fn join(f1: Vec<Vec<String>>, f2: Vec<Vec<String>>, pos_1: usize, pos_2: usize) -> Vec<Vec<String>> {
     let mut res = Vec::new();
     for r1 in f1.iter() {
@@ -38,8 +42,4 @@ fn join(f1: Vec<Vec<String>>, f2: Vec<Vec<String>>, pos_1: usize, pos_2: usize) 
     }
 
     res
-}
-
-fn read_file(file: &String) -> Vec<Vec<String>> {
-    read_to_string(file).unwrap().lines().map(|line| line.split(",").map(|x| x.to_string()).collect::<Vec<String>>()).collect()   
 }

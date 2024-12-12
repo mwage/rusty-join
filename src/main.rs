@@ -12,8 +12,9 @@ use rusty_join::*;
 use versions::*;
 
 fn main() {
+    // TODO: Bench Allocator at the very end?
     let args: Vec<String> = env::args().collect();
-    sorting_v2(args);
+    hash_v9(args);
     //all_hash(args);
     // custom_polars(args);
     // quintuple_sort(args);

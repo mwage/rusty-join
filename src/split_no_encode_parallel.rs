@@ -17,7 +17,7 @@ pub fn split_no_encode_parallel(args: Vec<String>) {
             sender.send((i - 1, data)).unwrap();
         });
     }
-    let mut maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>> = vec![FxHashMap::default(); 4];
+    let mut maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>> = vec![FxHashMap::default(); 4];
     for _ in 0..4 {
         let (index, data) = recv.recv().unwrap();
         maps[index] = data;
@@ -27,7 +27,7 @@ pub fn split_no_encode_parallel(args: Vec<String>) {
 }
 
 fn join_first_three_and_output_with_forth_small_vec(
-    maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>
+    maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>>
 ) {
     let num = maps[0].len();
     let size = (num + 7) / 8;
@@ -86,48 +86,48 @@ fn gen_buffer(chunks: (usize, usize), map: Arc<MapWrapper>) -> String {
 
 #[derive(Debug)]
 pub struct MapWrapper {
-    maps: UnsafeCell<Vec<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>>
+    maps: UnsafeCell<Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>>>
 }
 
 impl MapWrapper {
     pub fn new(
-        maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>) -> MapWrapper {
+        maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>>) -> MapWrapper {
         MapWrapper {
             maps: UnsafeCell::new(maps)
         }
     }
 
-    pub fn f1(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+    pub fn f1(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
         unsafe{&(*self.maps.get())[0]}
     }
 
-    pub fn f2(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+    pub fn f2(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
         unsafe{&(*self.maps.get())[1]}
     }
 
-    pub fn f3(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+    pub fn f3(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
         unsafe{&(*self.maps.get())[2]}
     }
 
-    pub fn f4(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+    pub fn f4(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
         unsafe{&(*self.maps.get())[3]}
     }
 }
 
 // #[derive(Debug)]
 // pub struct MapWrapper {
-//     f1: UnsafeCell<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>,
-//     f2: UnsafeCell<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>,
-//     f3: UnsafeCell<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>,
-//     f4: UnsafeCell<FxHashMap<CompactString, SmallVec<[CompactString; 5]>>>
+//     f1: UnsafeCell<FxHashMap<CompactString, SmallVec<CompactString; 1]>>>,
+//     f2: UnsafeCell<FxHashMap<CompactString, SmallVec<CompactString; 1]>>>,
+//     f3: UnsafeCell<FxHashMap<CompactString, SmallVec<CompactString; 1]>>>,
+//     f4: UnsafeCell<FxHashMap<CompactString, SmallVec<CompactString; 1]>>>
 // }
 
 // impl MapWrapper {
 //     pub fn new(
-//         f1: FxHashMap<CompactString, SmallVec<[CompactString; 5]>>, 
-//         f2: FxHashMap<CompactString, SmallVec<[CompactString; 5]>>,
-//         f3: FxHashMap<CompactString, SmallVec<[CompactString; 5]>>, 
-//         f4: FxHashMap<CompactString, SmallVec<[CompactString; 5]>>) -> MapWrapper {
+//         f1: FxHashMap<CompactString, SmallVec<CompactString; 1]>>, 
+//         f2: FxHashMap<CompactString, SmallVec<CompactString; 1]>>,
+//         f3: FxHashMap<CompactString, SmallVec<CompactString; 1]>>, 
+//         f4: FxHashMap<CompactString, SmallVec<CompactString; 1]>>) -> MapWrapper {
 //         MapWrapper {
 //             f1: UnsafeCell::new(f1),
 //             f2: UnsafeCell::new(f2),
@@ -136,19 +136,19 @@ impl MapWrapper {
 //         }
 //     }
 
-//     pub fn f1(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+//     pub fn f1(&self) -> &FxHashMap<CompactString, SmallVec<CompactString; 1]>> {
 //         unsafe{&(*self.f1.get())}
 //     }
 
-//     pub fn f2(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+//     pub fn f2(&self) -> &FxHashMap<CompactString, SmallVec<CompactString; 1]>> {
 //         unsafe{&(*self.f2.get())}
 //     }
 
-//     pub fn f3(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+//     pub fn f3(&self) -> &FxHashMap<CompactString, SmallVec<CompactString; 1]>> {
 //         unsafe{&(*self.f3.get())}
 //     }
 
-//     pub fn f4(&self) -> &FxHashMap<CompactString, SmallVec<[CompactString; 5]>> {
+//     pub fn f4(&self) -> &FxHashMap<CompactString, SmallVec<CompactString; 1]>> {
 //         unsafe{&(*self.f4.get())}
 //     }
 // }

@@ -74,12 +74,12 @@ pub fn read_file_split(file: &String, encoder: &mut Encoder) -> FxHashMap<usize,
 
 // First version hashmap parse 
 pub fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
         map.entry(split.next().unwrap())
-            .or_insert_with(|| Vec::with_capacity(2))
+            .or_insert_with(|| Vec::with_capacity(5))
             .push(split.next().unwrap());
     }
 

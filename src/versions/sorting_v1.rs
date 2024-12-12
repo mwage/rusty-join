@@ -9,7 +9,7 @@ use crate::helper::read_file_fx;
 
 // Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Hashmap Join History
 // New: Sorting
-// Better because less branch prediction misses due to same element occuring often in a row?
+// Better because less branch mispredictions due to same element occuring often in a row?
 pub fn sorting_v1(args: Vec<String>) {
     let mut encoder = EncoderFx::new();
     let (mut f1, mut f2, mut f3, mut f4) = (
