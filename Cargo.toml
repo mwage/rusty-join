@@ -13,6 +13,8 @@ compact_str = "0.8.0"
 smallvec = "1.11"
 mimalloc = "0.1"
 polars = { version = "0.45.0", features = ["csv"] }
+kanal = "=0.1.0-pre3"
+
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
