@@ -7,17 +7,28 @@ use rustc_hash::FxHashMap;
 // Better because it doesn't constantly call StdOut
 pub fn hash_v2(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
-        read_file_split_no_encoding(&args[1]), read_file_split_no_encoding(&args[2]),
-        read_file_split_no_encoding(&args[3]), read_file_split_no_encoding(&args[4])
+        read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+        read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
     join_first_three_and_output_with_forth(f1, f2, f3, f4);
 }
 
 pub fn hash_v2_read(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
-        read_file_split_no_encoding(&args[1]), read_file_split_no_encoding(&args[2]),
-        read_file_split_no_encoding(&args[3]), read_file_split_no_encoding(&args[4])
+        read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+        read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
+}
+
+fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+
+    for line in read_to_string(file).unwrap().lines() {
+        let mut split = line.split(",").map(|x| x.to_string());
+        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
+    }
+
+    map
 }
 
 fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
@@ -44,16 +55,4 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
     }
 
     print!("{}", buffer);
-}
-
-
-fn read_file_split_no_encoding(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
-
-    for line in read_to_string(file).unwrap().lines() {
-        let mut split = line.split(",").map(|x| x.to_string());
-        map.entry(split.next().unwrap()).or_default().push(split.next().unwrap());
-    }
-
-    map
 }
