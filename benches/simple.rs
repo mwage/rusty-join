@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use criterion_cycles_per_byte::CyclesPerByte;
-use rusty_join::{all_hash, quintuple_sort, split_no_encode};
+use rusty_join::versions::*;
 
 //Uncomment for default
 // fn bench_impls_smalldataset(c: &mut Criterion) {
@@ -16,25 +16,11 @@ fn bench_impls_smalldataset(c: &mut Criterion<CyclesPerByte>) {
         "data/f3.csv".to_string(),
         "data/f4.csv".to_string(),
     ];
+    
     group.bench_with_input(
-        BenchmarkId::new("SplitNoEncode", "Small"),
+        BenchmarkId::new("reduced_hash_v4", "Small"),
         &input_args,
-        |b, inpt_args| b.iter(|| split_no_encode(inpt_args.clone())),
-    );
-    group.bench_with_input(
-        BenchmarkId::new("AllHash", "Small"),
-        &input_args,
-        |b, inpt_args| b.iter(|| all_hash(inpt_args.clone())),
-    );
-    group.bench_with_input(
-        BenchmarkId::new("QuintupleSort", "Small"),
-        &input_args,
-        |b, inpt_args| b.iter(|| quintuple_sort(inpt_args.clone())),
-    );
-    group.bench_with_input(
-        BenchmarkId::new("SplitDuringRead", "Small"),
-        &input_args,
-        |b, inpt_args| b.iter(|| quintuple_sort(inpt_args.clone())),
+        |b, inpt_args| b.iter(|| reduced_hash_v4(inpt_args.clone())),
     );
     group.finish()
 }
@@ -47,7 +33,7 @@ fn bench_impls_smalldataset(c: &mut Criterion<CyclesPerByte>) {
 // see: https://github.com/wainwrightmark/criterion-cycles-per-byte
 criterion_group!(
     name = my_bench;
-    config = Criterion::default().with_measurement(CyclesPerByte);
+    config = Criterion::default().sample_size(10).with_measurement(CyclesPerByte);
     targets = bench_impls_smalldataset
 );
 criterion_main!(my_bench);

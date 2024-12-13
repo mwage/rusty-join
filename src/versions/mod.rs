@@ -16,6 +16,10 @@ mod hash_v6;
 mod hash_v7;
 mod hash_v8;
 mod hash_v9;
+mod reduced_hash_v1;
+mod reduced_hash_v2;
+mod reduced_hash_v3;
+mod reduced_hash_v4;
 
 pub use baseline_v1::baseline_v1;
 pub use baseline_v2::baseline_v2;
@@ -35,3 +39,7 @@ pub use hash_v6::hash_v6;
 pub use hash_v7::hash_v7;
 pub use hash_v8::hash_v8;
 pub use hash_v9::hash_v9;
+pub use reduced_hash_v1::reduced_hash_v1;
+pub use reduced_hash_v2::reduced_hash_v2;
+pub use reduced_hash_v3::reduced_hash_v3;
+pub use reduced_hash_v4::reduced_hash_v4;

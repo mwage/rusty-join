@@ -14,8 +14,9 @@ use versions::*;
 fn main() {
     // TODO: Bench Allocator at the very end?
     let args: Vec<String> = env::args().collect();
-    hash_v9(args);
-    //all_hash(args);
+    reduced_hash_v4(args);
+    // hash_v9(args);
+    // all_hash(args);
     // custom_polars(args);
     // quintuple_sort(args);
     // split_during_read(args);

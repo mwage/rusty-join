@@ -33,6 +33,7 @@ pub fn sorting_v1_read(args: Vec<String>) {
     );
 }
 
+
 fn read_file(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
     read_to_string(file).unwrap().lines().map(
         |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
