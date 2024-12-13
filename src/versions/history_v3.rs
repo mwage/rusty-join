@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
 use crate::encoder::EncoderFx;
 use generic_array::{ArrayLength, GenericArray};
 use rustc_hash::FxHashMap;
 use typenum::{U2, U3, U4, U5};
-use crate::helper::read_file_fx;
+use std::fs::read_to_string;
 
 
 // Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Hashmap Join History
@@ -13,7 +11,7 @@ use crate::helper::read_file_fx;
 pub fn history_v3(args: Vec<String>) {
     let mut encoder = EncoderFx::new();
     let (f1, f2, f3, f4) = (
-        read_file_fx(&args[1], &mut encoder), read_file_fx(&args[2], &mut encoder), read_file_fx(&args[3], &mut encoder), read_file_fx(&args[4], &mut encoder)
+        read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
     let f1_f2 = join::<U2, U2, U3>(f1, f2, 0);
     let f1_f2_f3 = join::<U3, U2, U4>(f1_f2, f3, 0);
@@ -26,8 +24,14 @@ pub fn history_v3(args: Vec<String>) {
 pub fn history_v3_read(args: Vec<String>) {
     let mut encoder = EncoderFx::new();
     let (f1, f2, f3, f4) = (
-        read_file_fx(&args[1], &mut encoder), read_file_fx(&args[2], &mut encoder), read_file_fx(&args[3], &mut encoder), read_file_fx(&args[4], &mut encoder)
+        read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
+}
+
+fn read_file(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
+    read_to_string(file).unwrap().lines().map(
+        |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
+    ).collect()
 }
 
 

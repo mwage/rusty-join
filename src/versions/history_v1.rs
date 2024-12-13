@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use crate::encoder::Encoder;
 use generic_array::{ArrayLength, GenericArray};
 use typenum::{U2, U3, U4, U5};
-use crate::helper::read_file;
+use std::fs::read_to_string;
 
 
 // Requires: Baseline, Encoder, Generic Arrays, loop unrolling
@@ -29,6 +29,11 @@ pub fn history_v1_read(args: Vec<String>) {
     );
 }
 
+fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
+    read_to_string(file).unwrap().lines().map(
+        |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
+    ).collect()
+}
 
 fn join<F1, F2, F3>(f1: Vec<GenericArray<usize, F1>>, f2: Vec<GenericArray<usize, F2>>, pos_1: usize) -> Vec<GenericArray<usize, F3>> 
 where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength 

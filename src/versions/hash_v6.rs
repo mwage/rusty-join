@@ -6,17 +6,35 @@ use rustc_hash::{FxBuildHasher, FxHashMap};
 // Better because of API overheads?
 pub fn hash_v6(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
-        read_file_no_entry_api(&args[1]), read_file_no_entry_api(&args[2]),
-        read_file_no_entry_api(&args[3]), read_file_no_entry_api(&args[4])
+        read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+        read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
     join_first_three_and_output_with_forth(f1, f2, f3, f4);
 }
 
 pub fn hash_v6_read(args: Vec<String>) {
     let (f1, f2, f3, f4) = (
-        read_file_no_entry_api(&args[1]), read_file_no_entry_api(&args[2]),
-        read_file_no_entry_api(&args[3]), read_file_no_entry_api(&args[4])
+        read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+        read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
+}
+
+fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let contents = std::fs::read_to_string(file).unwrap();
+
+    for line in contents.lines() {
+        if let Some((key, value)) = line.split_once(',') {
+            if let Some(entry) = map.get_mut(key) {
+                entry.push(value.to_string());
+            } else {
+                let mut vec = Vec::with_capacity(5);
+                vec.push(value.to_string());
+                map.insert(key.to_string(), vec);
+            }
+        }
+    }
+    map
 }
 
 fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
@@ -47,22 +65,4 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2
     }
 
     print!("{}", buffer);
-}
-
-fn read_file_no_entry_api(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
-    let contents = std::fs::read_to_string(file).unwrap();
-
-    for line in contents.lines() {
-        if let Some((key, value)) = line.split_once(',') {
-            if let Some(entry) = map.get_mut(key) {
-                entry.push(value.to_string());
-            } else {
-                let mut vec = Vec::with_capacity(5);
-                vec.push(value.to_string());
-                map.insert(key.to_string(), vec);
-            }
-        }
-    }
-    map
 }

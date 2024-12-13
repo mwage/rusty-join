@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
 use crate::encoder::EncoderFx;
 use generic_array::{ArrayLength, GenericArray};
 use rustc_hash::FxHashMap;
 use typenum::{U2, U3, U4, U5};
-use crate::helper::read_file_fx;
+use std::fs::read_to_string;
 
 
 // Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Hashmap Join History
@@ -13,7 +11,7 @@ use crate::helper::read_file_fx;
 pub fn sorting_v1(args: Vec<String>) {
     let mut encoder = EncoderFx::new();
     let (mut f1, mut f2, mut f3, mut f4) = (
-        read_file_fx(&args[1], &mut encoder), read_file_fx(&args[2], &mut encoder), read_file_fx(&args[3], &mut encoder), read_file_fx(&args[4], &mut encoder)
+        read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
     sort(&mut f1, 0);
     sort(&mut f2, 0);
@@ -31,8 +29,14 @@ pub fn sorting_v1(args: Vec<String>) {
 pub fn sorting_v1_read(args: Vec<String>) {
     let mut encoder = EncoderFx::new();
     let (f1, f2, f3, f4) = (
-        read_file_fx(&args[1], &mut encoder), read_file_fx(&args[2], &mut encoder), read_file_fx(&args[3], &mut encoder), read_file_fx(&args[4], &mut encoder)
+        read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
+}
+
+fn read_file(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
+    read_to_string(file).unwrap().lines().map(
+        |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
+    ).collect()
 }
 
 fn sort<F: ArrayLength>(vec: &mut Vec<GenericArray<usize, F>>, pos: usize) {
