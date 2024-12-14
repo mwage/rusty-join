@@ -1,16 +1,17 @@
 use std::fs::read_to_string;
 
 use generic_array::{ArrayLength, GenericArray};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use typenum::{U2, U3, U4, U5};
 
-use crate::encoder::Encoder;
+use crate::encoder::EncoderFx;
 
-// Requires: Baseline, Encoder, Generic Arrays, Sorting
-// New: Range map
-// Better because it only iterates the elements that are necessary, NOTE: This is basically merge join
-pub fn sorting_v2(args: Vec<String>) {
-    let mut encoder = Encoder::new();
+
+// Requires: Baseline, Encoder, Generic Arrays, Sorting, Range map, 
+// New: Faster Hashmap
+// Better because non-cryptographic hash
+pub fn sorting_v3(args: Vec<String>) {
+    let mut encoder = EncoderFx::new();
     let (mut f1, mut f2, mut f3, mut f4) = (
         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
@@ -29,14 +30,14 @@ pub fn sorting_v2(args: Vec<String>) {
     }
 }
 
-pub fn sorting_v2_read(args: Vec<String>) {
-    let mut encoder = Encoder::new();
+pub fn sorting_v3_read(args: Vec<String>) {
+    let mut encoder = EncoderFx::new();
     let (f1, f2, f3, f4) = (
         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
     );
 }
 
-pub fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
+pub fn read_file(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
     read_to_string(file).unwrap().lines().map(
         |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
     ).collect()
@@ -50,7 +51,7 @@ fn join<F1, F2, F3>(f1: Vec<GenericArray<usize, F1>>, f2: Vec<GenericArray<usize
 where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength 
 {
     let mut res = Vec::new();
-    let mut range_map = HashMap::new();
+    let mut range_map = FxHashMap::default();
     let mut last = usize::max_value();
     let mut start = 0;
 

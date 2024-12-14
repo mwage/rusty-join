@@ -15,3 +15,15 @@ pub use split_during_read::split_during_read;
 pub use split_no_encode::split_no_encode;
 pub use split_no_encode_pattern_matching::split_no_encode_pattern_matching;
 pub use split_no_encode_parallel::split_no_encode_parallel;
+
+use std::process::Command;
+
+pub fn sample_program(mut args: Vec<String>) {
+    args.remove(0);
+    Command::new("/usr/ftp/pub/anton/lvas/effizienz-aufgabe24/myjoin")
+        .args(args)
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap();
+}
