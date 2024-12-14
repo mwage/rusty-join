@@ -20,6 +20,8 @@ mod reduced_hash_v1;
 mod reduced_hash_v2;
 mod reduced_hash_v3;
 mod reduced_hash_v4;
+mod parallel_hash;
+mod parallel_reduced_hash;
 
 pub use baseline_v1::baseline_v1;
 pub use baseline_v2::baseline_v2;
@@ -43,3 +45,5 @@ pub use reduced_hash_v1::reduced_hash_v1;
 pub use reduced_hash_v2::reduced_hash_v2;
 pub use reduced_hash_v3::reduced_hash_v3;
 pub use reduced_hash_v4::reduced_hash_v4;
+pub use parallel_hash::parallel_hash;
+pub use parallel_reduced_hash::parallel_reduced_hash;

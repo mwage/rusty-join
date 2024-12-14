@@ -1,19 +1,17 @@
-use crate::helper::*;
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxBuildHasher, FxHashMap};
 use compact_str::CompactString;
-use std::{cell::UnsafeCell, sync::{Arc, Mutex, RwLock}, thread::{self, JoinHandle}, time::Instant};
+use std::{cell::UnsafeCell, sync::Arc, thread};
 use smallvec::SmallVec;
 use kanal::unbounded;
 
-// Reads all files into hash maps with the first column as key, then merges together accordingly.
-// Values are not encoded, just stored as a string.
-pub fn split_no_encode_parallel(args: Vec<String>) {
+// Multithreaded version of hash_v9 with implementation level optimizations from reduced_hash (without the algorithmic changes)
+pub fn parallel_hash(args: Vec<String>) {
     let (sender, recv) = unbounded();
     for i in 1..5 {
         let sender = sender.clone();
         let filename = args[i].clone();
         thread::spawn(move || {
-            let data = read_file_no_entry_api_small_vec(&filename);
+            let data = read_file_to_map(&filename);
             sender.send((i - 1, data)).unwrap();
         });
     }
@@ -23,12 +21,49 @@ pub fn split_no_encode_parallel(args: Vec<String>) {
         maps[index] = data;
     }
     
-    join_first_three_and_output_with_forth_small_vec(maps);
+    join(maps);
 }
 
-fn join_first_three_and_output_with_forth_small_vec(
-    maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>>
-) {
+pub fn parallel_hash_read(args: Vec<String>) {
+    let (sender, recv) = unbounded();
+    for i in 1..5 {
+        let sender = sender.clone();
+        let filename = args[i].clone();
+        thread::spawn(move || {
+            let data = read_file_to_map(&filename);
+            sender.send((i - 1, data)).unwrap();
+        });
+    }
+    let mut maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>> = vec![FxHashMap::default(); 4];
+    for _ in 0..4 {
+        let (index, data) = recv.recv().unwrap();
+        maps[index] = data;
+    }
+}
+
+fn read_file_to_map(file: &String) -> FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
+    let mut map: FxHashMap<CompactString, SmallVec<[CompactString; 1]>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let contents = std::fs::read_to_string(file).unwrap();
+    let mut remainder = contents.as_str();
+
+    while let Some((key, rem)) = remainder.split_once(',') {
+        let (value, rem) = rem.split_once('\n').unwrap();
+
+        if let Some(entry) = map.get_mut(key) {
+            entry.push(CompactString::from(value));
+        } else {
+            let mut vec = SmallVec::new();
+            vec.push(CompactString::from(value));
+            map.insert(CompactString::from(key), vec);
+        }
+
+        remainder = rem;
+    }
+    
+    map
+}
+
+fn join(maps: Vec<FxHashMap<CompactString, SmallVec<[CompactString; 1]>>>) {
     let num = maps[0].len();
     let size = (num + 7) / 8;
     let mut chunks = Vec::with_capacity(8);
