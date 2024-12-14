@@ -1,0 +1,48 @@
+diff --git a/baseline_v3.rs b/baseline_v4.rs
+index 0bb1e18..57803fe 100644
+--- a/baseline_v3.rs
++++ b/baseline_v4.rs
+@@ -4,10 +4,10 @@ use typenum::{U2, U3, U4, U5};
+ use std::fs::read_to_string;
+ 
+ 
+-// Requires: Baseline, Encoder
+-// New: Generic Arrays
+-// Better because arrays can be kept on the stack, Vecs are on the heap
+-pub fn baseline_v3(args: Vec<String>) {
++// Requires: Baseline, Encoder, Generic Arrays
++// New: loop unrolling
++// Better because loop unrolling (if it makes a difference here?)
++pub fn baseline_v4(args: Vec<String>) {
+     let mut encoder = Encoder::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+@@ -20,7 +20,7 @@ pub fn baseline_v3(args: Vec<String>) {
+     }
+ }
+ 
+-pub fn baseline_v3_read(args: Vec<String>) {
++pub fn baseline_v4_read(args: Vec<String>) {
+     let mut encoder = Encoder::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+@@ -43,15 +43,15 @@ where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength
+                 let mut new = GenericArray::default();
+                 new[0] = r1[pos_1];
+                 let mut curr = 1;
+-                for (i, s) in r1.iter().enumerate() {
++                for i in 0..F1::to_usize() {
+                     if i != pos_1 {
+-                        new[curr] = *s;
++                        new[curr] = r1[i];
+                         curr += 1;
+                     }
+                 }
+-                for (i, s) in r2.iter().enumerate() {
++                for i in 0..F2::to_usize() {
+                     if i != pos_2 {
+-                        new[curr] = *s;
++                        new[curr] = r2[i];
+                         curr += 1;
+                     }
+                 }

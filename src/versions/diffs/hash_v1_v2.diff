@@ -1,0 +1,57 @@
+diff --git a/hash_v1.rs b/hash_v2.rs
+index 2e7134a..0352c90 100644
+--- a/hash_v1.rs
++++ b/hash_v2.rs
+@@ -2,18 +2,18 @@ use std::fs::read_to_string;
+ 
+ use rustc_hash::FxHashMap;
+ 
+-// Requires: -
+-// New: Hash join implementation
+-// Better because no encoding necessary
+-pub fn hash_v1(args: Vec<String>) {
++// Requires: Hash Join
++// New: Buffer
++// Better because it doesn't constantly call StdOut
++pub fn hash_v2(args: Vec<String>) {
+     let (f1, f2, f3, f4) = (
+         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+         read_file_to_map(&args[3]), read_file_to_map(&args[4])
+     );
+-    join(f1, f2, f3, f4);
++    join_first_three_and_output_with_forth(f1, f2, f3, f4);
+ }
+ 
+-pub fn hash_v1_read(args: Vec<String>) {
++pub fn hash_v2_read(args: Vec<String>) {
+     let (f1, f2, f3, f4) = (
+         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+         read_file_to_map(&args[3]), read_file_to_map(&args[4])
+@@ -31,7 +31,9 @@ fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
+     map
+ }
+ 
+-fn join(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
++fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
++    let mut buffer = String::new();
++    
+     for key in f1.keys() {
+         if !f2.contains_key(key) || !f3.contains_key(key) {
+             continue;   // Not in all 3
+@@ -45,12 +47,12 @@ fn join(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>,
+                     }
+                     
+                     for x4 in f4.get(x3).unwrap() {
+-                        println!("{},{},{},{},{}", x3, key, x1, x2, x4);
++                        buffer.push_str(&format!("{},{},{},{},{}\n", x3, key, x1, x2, x4));
+                     }
+                 }
+             }
+         }
+     }
+-}
+-
+ 
++    print!("{}", buffer);
++}
+\ No newline at end of file

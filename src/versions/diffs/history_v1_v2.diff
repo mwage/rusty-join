@@ -1,0 +1,43 @@
+diff --git a/history_v1.rs b/history_v2.rs
+index 54ebb31..df424be 100644
+--- a/history_v1.rs
++++ b/history_v2.rs
+@@ -1,4 +1,4 @@
+-use std::collections::BTreeMap;
++use std::collections::HashMap;
+ 
+ use crate::encoder::Encoder;
+ use generic_array::{ArrayLength, GenericArray};
+@@ -6,10 +6,10 @@ use typenum::{U2, U3, U4, U5};
+ use std::fs::read_to_string;
+ 
+ 
+-// Requires: Baseline, Encoder, Generic Arrays, loop unrolling
+-// New: Join History
+-// Better because we keep memory of already known computations
+-pub fn history_v1(args: Vec<String>) {
++// Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Join History
++// New: Hashmap Join History
++// Better because BTreeMap scales with log(n) => Hashmap is better for large n
++pub fn history_v2(args: Vec<String>) {
+     let mut encoder = Encoder::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+@@ -22,7 +22,7 @@ pub fn history_v1(args: Vec<String>) {
+     }
+ }
+ 
+-pub fn history_v1_read(args: Vec<String>) {
++pub fn history_v2_read(args: Vec<String>) {
+     let mut encoder = Encoder::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+@@ -39,7 +39,7 @@ fn join<F1, F2, F3>(f1: Vec<GenericArray<usize, F1>>, f2: Vec<GenericArray<usize
+ where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength 
+ {
+     let mut res = Vec::new();
+-    let mut seen: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
++    let mut seen: HashMap<usize, Vec<usize>> = HashMap::new();
+     for (i1, r1) in f1.iter().enumerate() {
+         match seen.get(&i1) {
+             Some(list) => {

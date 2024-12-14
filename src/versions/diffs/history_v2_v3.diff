@@ -1,0 +1,58 @@
+diff --git a/history_v2.rs b/history_v3.rs
+index df424be..59f9527 100644
+--- a/history_v2.rs
++++ b/history_v3.rs
+@@ -1,16 +1,15 @@
+-use std::collections::HashMap;
+-
+-use crate::encoder::Encoder;
++use crate::encoder::EncoderFx;
+ use generic_array::{ArrayLength, GenericArray};
++use rustc_hash::FxHashMap;
+ use typenum::{U2, U3, U4, U5};
+ use std::fs::read_to_string;
+ 
+ 
+-// Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Join History
+-// New: Hashmap Join History
+-// Better because BTreeMap scales with log(n) => Hashmap is better for large n
+-pub fn history_v2(args: Vec<String>) {
+-    let mut encoder = Encoder::new();
++// Requires: Baseline, Encoder, Generic Arrays, loop unrolling, Hashmap Join History
++// New: Faster Hashmap
++// Better because more performant Hashmap, we don't need the extra security
++pub fn history_v3(args: Vec<String>) {
++    let mut encoder = EncoderFx::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+     );
+@@ -22,24 +21,25 @@ pub fn history_v2(args: Vec<String>) {
+     }
+ }
+ 
+-pub fn history_v2_read(args: Vec<String>) {
+-    let mut encoder = Encoder::new();
++pub fn history_v3_read(args: Vec<String>) {
++    let mut encoder = EncoderFx::new();
+     let (f1, f2, f3, f4) = (
+         read_file(&args[1], &mut encoder), read_file(&args[2], &mut encoder), read_file(&args[3], &mut encoder), read_file(&args[4], &mut encoder)
+     );
+ }
+ 
+-fn read_file(file: &String, encoder: &mut Encoder) -> Vec<GenericArray<usize, U2>> {
++fn read_file(file: &String, encoder: &mut EncoderFx) -> Vec<GenericArray<usize, U2>> {
+     read_to_string(file).unwrap().lines().map(
+         |line| *GenericArray::from_slice(&line.split(",").map(|x| encoder.encode(x)).collect::<Vec<usize>>())
+     ).collect()
+ }
+ 
++
+ fn join<F1, F2, F3>(f1: Vec<GenericArray<usize, F1>>, f2: Vec<GenericArray<usize, F2>>, pos_1: usize) -> Vec<GenericArray<usize, F3>> 
+ where F1: ArrayLength, F2: ArrayLength, F3: ArrayLength 
+ {
+     let mut res = Vec::new();
+-    let mut seen: HashMap<usize, Vec<usize>> = HashMap::new();
++    let mut seen: FxHashMap<usize, Vec<usize>> = FxHashMap::default();
+     for (i1, r1) in f1.iter().enumerate() {
+         match seen.get(&i1) {
+             Some(list) => {

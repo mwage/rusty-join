@@ -1,0 +1,74 @@
+diff --git a/hash_v8.rs b/hash_v9.rs
+index 31b2f38..1178db3 100644
+--- a/hash_v8.rs
++++ b/hash_v9.rs
+@@ -2,28 +2,29 @@ use std::io::{stdout, BufWriter, Write};
+ 
+ use compact_str::CompactString;
+ use rustc_hash::{FxBuildHasher, FxHashMap};
++use smallvec::SmallVec;
+ 
+-
+-// Requires: Hash Join, Explicit Buffer, Preallocation, Pattern Matching, no entry API, CompactString
+-// New: BufWriter
+-// Better because optimized for the task?
+-pub fn hash_v8(args: Vec<String>) {
++// Requires: Hash Join, Explicit Buffer, Preallocation, Pattern Matching, no entry API, CompactString, BufWriter
++// New: SmallVec
++// Allows us to store small vectors on the stack
++pub fn hash_v9(args: Vec<String>) {
+     let (f1, f2, f3, f4) = (
+         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+         read_file_to_map(&args[3]), read_file_to_map(&args[4])
+     );
+-    join_first_three_and_output_with_forth(f1, f2, f3, f4);
++    
++    join(&f1, &f2, &f3, &f4);
+ }
+ 
+-pub fn hash_v8_read(args: Vec<String>) {
++pub fn hash_v9_read(args: Vec<String>) {
+     let (f1, f2, f3, f4) = (
+         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
+         read_file_to_map(&args[3]), read_file_to_map(&args[4])
+     );
+ }
+ 
+-fn read_file_to_map(file: &String) -> FxHashMap<CompactString, Vec<CompactString>> {
+-    let mut map: FxHashMap<CompactString, Vec<CompactString>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
++fn read_file_to_map(file: &String) -> FxHashMap<CompactString, SmallVec<[CompactString; 1]>> {
++    let mut map: FxHashMap<CompactString, SmallVec<[CompactString; 1]>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+     let contents = std::fs::read_to_string(file).unwrap();
+ 
+     for line in contents.lines() {
+@@ -31,8 +32,7 @@ fn read_file_to_map(file: &String) -> FxHashMap<CompactString, Vec<CompactString
+         if let Some(entry) = map.get_mut(key) {
+             entry.push(CompactString::from(value));
+         } else {
+-            // ~2m better than without ::with_capacity(5)
+-            let mut vec = Vec::with_capacity(5);
++            let mut vec = SmallVec::new();
+             vec.push(CompactString::from(value));
+             map.insert(CompactString::from(key), vec);
+         }
+@@ -40,7 +40,12 @@ fn read_file_to_map(file: &String) -> FxHashMap<CompactString, Vec<CompactString
+     map
+ }
+ 
+-fn join_first_three_and_output_with_forth(f1: FxHashMap<CompactString, Vec<CompactString>>, f2: FxHashMap<CompactString, Vec<CompactString>>, f3: FxHashMap<CompactString, Vec<CompactString>>, f4: FxHashMap<CompactString, Vec<CompactString>>) {
++fn join(
++    f1: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
++    f2: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
++    f3: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>,
++    f4: &FxHashMap<CompactString, SmallVec<[CompactString; 1]>>
++) {
+     let stdout = stdout();
+     let lock = stdout.lock();
+     let mut buffer = BufWriter::new(lock);
+@@ -70,4 +75,4 @@ fn join_first_three_and_output_with_forth(f1: FxHashMap<CompactString, Vec<Compa
+     }
+ 
+     buffer.flush().unwrap();
+-}
+\ No newline at end of file
++}
