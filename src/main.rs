@@ -14,12 +14,12 @@ use versions::*;
 fn main() {
     // TODO: Bench Allocator at the very end?
     let args: Vec<String> = env::args().collect();
-    sample_program(args);
+    // sample_program(args);
     // baseline_v1(args);
     // history_v3(args);
     // sorting_v1(args);
     // reduced_hash_v4(args);
-    // hash_v9(args);
+    hash_v9(args);
     // parallel_hash(args);
     // parallel_reduced_hash(args);
     // all_hash(args);
