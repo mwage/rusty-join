@@ -9,7 +9,7 @@ pub fn hash_v5(args: Vec<String>) {
         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
         read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
-    join_first_three_and_output_with_forth(f1, f2, f3, f4);
+    join(f1, f2, f3, f4);
 }
 
 pub fn hash_v5_read(args: Vec<String>) {
@@ -20,7 +20,8 @@ pub fn hash_v5_read(args: Vec<String>) {
 }
 
 fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
+    let mut map: FxHashMap<String, Vec<String>> = 
+        FxHashMap::with_capacity_and_hasher(5000000, FxBuildHasher::default());
 
     for line in read_to_string(file).unwrap().lines() {
         let mut split = line.split(",").map(|x| x.to_string());
@@ -32,7 +33,9 @@ fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
     map
 }
 
-fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
+fn join(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, 
+    f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) 
+{
     let mut buffer = String::new();
     for (key, vec1) in f1.iter() {
         if let (Some(vec2), Some(vec3)) = (f2.get(key), f3.get(key)) {

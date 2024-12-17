@@ -10,7 +10,7 @@ pub fn hash_v2(args: Vec<String>) {
         read_file_to_map(&args[1]), read_file_to_map(&args[2]),
         read_file_to_map(&args[3]), read_file_to_map(&args[4])
     );
-    join_first_three_and_output_with_forth(f1, f2, f3, f4);
+    join(f1, f2, f3, f4);
 }
 
 pub fn hash_v2_read(args: Vec<String>) {
@@ -31,7 +31,9 @@ fn read_file_to_map(file: &String) -> FxHashMap<String, Vec<String>> {
     map
 }
 
-fn join_first_three_and_output_with_forth(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) {
+fn join(f1: FxHashMap<String, Vec<String>>, f2: FxHashMap<String, Vec<String>>, 
+    f3: FxHashMap<String, Vec<String>>, f4: FxHashMap<String, Vec<String>>) 
+{
     let mut buffer = String::new();
     
     for key in f1.keys() {

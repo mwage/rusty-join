@@ -1,6 +1,5 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
-use rusty_join::{
-    polars_join::{self, custom_polars},
+use rusty_join::{    
     sample_program,
     versions::*,
 };

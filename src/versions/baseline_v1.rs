@@ -3,7 +3,8 @@ use std::fs::read_to_string;
 // Requires: -
 // New: Baseline
 pub fn baseline_v1(args: Vec<String>) {
-    let (f1, f2, f3, f4) = (read_file(&args[1]), read_file(&args[2]), read_file(&args[3]), read_file(&args[4]));
+    let (f1, f2, f3, f4) = 
+        (read_file(&args[1]), read_file(&args[2]), read_file(&args[3]), read_file(&args[4]));
     let f1_f2 = join(f1, f2, 0, 0);
     let f1_f2_f3 = join(f1_f2, f3, 0, 0);
     let f1_f2_f3_f4 = join(f1_f2_f3, f4, 3, 0);

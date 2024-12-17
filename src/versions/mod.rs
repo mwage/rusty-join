@@ -1,4 +1,3 @@
-pub mod anton;
 mod baseline_v1;
 mod baseline_v2;
 mod baseline_v3;
@@ -21,6 +20,7 @@ mod reduced_hash_v4;
 mod sorting_v1;
 mod sorting_v2;
 mod sorting_v3;
+mod polars;
 
 pub use baseline_v1::baseline_v1;
 pub use baseline_v2::baseline_v2;
@@ -59,3 +59,4 @@ pub use reduced_hash_v4::reduced_hash_v4_read;
 pub use sorting_v1::sorting_v1;
 pub use sorting_v2::sorting_v2;
 pub use sorting_v3::sorting_v3;
+pub use polars::custom_polars;
